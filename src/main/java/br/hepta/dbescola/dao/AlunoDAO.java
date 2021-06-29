@@ -86,6 +86,7 @@ public class AlunoDAO {
 
     public Aluno selecionarAlunoMatricula(int matricula) {
 
+        
         Aluno alunoBuscado = new Aluno();
 
         String sql = "SELECT * FROM aluno a WHERE matricula = ?";    
