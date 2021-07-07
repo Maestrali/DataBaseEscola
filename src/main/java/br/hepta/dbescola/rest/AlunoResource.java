@@ -8,8 +8,9 @@ import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
-//import javax.ws.rs.PUT;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -74,27 +75,35 @@ public class AlunoResource {
 
     }
 
-//    @PUT
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("{id}")
-//    public Response updateAluno(@PathParam("id") int id, Aluno aluno) {
-//        aluno.setMatricula(id);
-//        if (dao.atualizarAluno(aluno)) {
-//            return Response.ok().build();
-//        } else {
-//            return Response.notModified().build();
-//        }
-//    }
-
-    @DELETE
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path("{id}")
-    public Response excluirAluno(@PathParam("id") int id) {
+    public Response updateAluno(@PathParam("id") int id, Aluno aluno) {
+        aluno.setMatricula(id);
+        if (dao.atualizarAluno(aluno)) {
+            return Response.ok().build();
+        } else {
+            return Response.notModified().build();
+        }
+    }
+
+    @OPTIONS
+    @Path("{id}")
+    public Response deletarAluno(@PathParam("id") int id) {
 
         if (dao.removerAluno(id)) {
             return Response.ok().build();
         } else {
             return Response.notModified().build();
         }
+    }
+    
+    @DELETE
+    @Path("{id}")
+    public Response excluirAluno(@PathParam("id") int id) {
+        
+        return dao.removerAluno(id) ? Response.ok().build() : Response.notModified().build();
+        
     }
 
 }
