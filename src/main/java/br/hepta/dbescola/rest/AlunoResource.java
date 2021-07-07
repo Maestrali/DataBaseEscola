@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Date;
 
 import javax.ws.rs.Consumes;
-//import javax.ws.rs.DELETE;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 //import javax.ws.rs.PUT;
@@ -24,25 +24,25 @@ public class AlunoResource {
 
     private static AlunoDAO dao = new AlunoDAO();
     
-    @POST
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarTodosAlunos() {
         return Response.status(Response.Status.OK)
                 .entity(dao.buscarAlunosNome("")).build();
     }
 
-//    @GET
-//    @Path("{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response encontrarAluno(@PathParam("id") int id) {
-//
-//        Aluno alunoBuscado = dao.selecionarAlunoMatricula(id);
-//        if (alunoBuscado.getMatricula() != null) {
-//            return Response.ok(alunoBuscado, MediaType.APPLICATION_JSON).build();
-//        } else {
-//            return Response.status(Response.Status.NOT_FOUND).build();
-//        }
-//    }
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response encontrarAluno(@PathParam("id") int id) {
+
+        Aluno alunoBuscado = dao.selecionarAlunoMatricula(id);
+        if (alunoBuscado.getMatricula() != null) {
+            return Response.ok(alunoBuscado, MediaType.APPLICATION_JSON).build();
+        } else {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class AlunoResource {
 //        }
 //    }
 
-    @GET
+    @DELETE
     @Path("{id}")
     public Response excluirAluno(@PathParam("id") int id) {
 
