@@ -117,18 +117,18 @@ public class AlunoDAO {
 
         List<Aluno> alunos = new ArrayList<Aluno>();
 
-        String sql = "SELECT * FROM aluno a WHERE nome LIKE ?";
-
+        String sql = " SELECT a.* FROM aluno a WHERE nome LIKE ? ";
+                
         try {
             PreparedStatement pst = conexao.prepareStatement(sql);
 
-            pst.setString(1, nome + "%");
+            pst.setString(1,"%" + nome + "%");
 
             ResultSet res = pst.executeQuery();
 
             System.out.print("Alunos Encontrados:  ");
             while (res.next()) {
-                Aluno alunoBuscado = this.parse(res);
+                Aluno alunoBuscado = parse(res);                
                 System.out.print(alunoBuscado.getNome() + "  ");
                 alunos.add(alunoBuscado);
             }
