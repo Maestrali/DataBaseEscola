@@ -8,6 +8,7 @@ import java.util.Date;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -24,12 +25,11 @@ import br.hepta.dbescola.entity.Aluno;
 public class AlunoResource {
 
     private static AlunoDAO dao = new AlunoDAO();
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response listarTodosAlunos() {
-        return Response.status(Response.Status.OK)
-                .entity(dao.buscarAlunosNome("")).build();
+        return Response.status(Response.Status.OK).entity(dao.buscarAlunosNome("")).build();
     }
 
     @GET
@@ -69,41 +69,53 @@ public class AlunoResource {
         AlunoDAO dao = new AlunoDAO();
 
         int matricula = dao.cadastrarAluno(aluno);
-        URI uri = new URI("/aluno/" + matricula);
+        URI uri = new URI("/DataBaseEscola/rest/aluno/" + matricula);
 
         return Response.created(uri).build();
 
     }
 
-    @PUT
-    @Consumes(MediaType.APPLICATION_JSON)
+    @OPTIONS
     @Path("{id}")
-    public Response updateAluno(@PathParam("id") int id, Aluno aluno) {
-        aluno.setMatricula(id);
-        if (dao.atualizarAluno(aluno)) {
-            return Response.ok().build();
-        } else {
-            return Response.notModified().build();
-        }
+    public Response fazerNadaComAluno(@PathParam("id") int id) {
+        Response res = Response.ok().build();
+        System.out.println(res);
+        return res;
     }
 
     @OPTIONS
-    @Path("{id}")
-    public Response deletarAluno(@PathParam("id") int id) {
-
-        if (dao.removerAluno(id)) {
-            return Response.ok().build();
-        } else {
-            return Response.notModified().build();
-        }
+    public Response fazerNadaComAlunoDenovo(Aluno aluno) {
+        Response res = Response.ok().build();
+        System.out.println(res);
+        return res;
     }
-    
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public Response atualizoAluno(@PathParam("id") int id, Aluno aluno) {
+
+        if (aluno.getMatricula() != id) {
+            aluno.setMatricula(id);
+        }
+        return dao.atualizarAluno(aluno) ? Response.ok().build() : Response.notModified().build();
+    }
+
+    @HEAD
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("{id}")
+    public Response denovoNaoFazerNadaComAluno(@PathParam("id") int id, Aluno aluno) {
+        Response res = Response.ok().build();
+        System.out.println(res);
+        return res;
+    }
+
     @DELETE
     @Path("{id}")
     public Response excluirAluno(@PathParam("id") int id) {
-        
+
         return dao.removerAluno(id) ? Response.ok().build() : Response.notModified().build();
-        
+
     }
 
 }

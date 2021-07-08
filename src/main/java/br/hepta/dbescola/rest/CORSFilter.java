@@ -11,7 +11,7 @@ public class CORSFilter implements ContainerResponseFilter {
     @Override
     public void filter(ContainerRequestContext req, ContainerResponseContext res){
         res.getHeaders().add("Access-Control-Allow-Origin", "*");
-        res.getHeaders().add("Access-Control-Allow-Headers", //
+        res.getHeaders().add("Access-Control-Allow-Headers",
                 "CSRF-Token, X-Requested-By, Authorization, Content-Type");   
         res.getHeaders().add("Access-Control-Allow-Credentials", "true");
         res.getHeaders().add("Access-Control-Allow-Methods",

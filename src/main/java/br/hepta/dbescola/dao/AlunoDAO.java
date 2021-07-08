@@ -26,8 +26,8 @@ public class AlunoDAO {
 
         aluno.setMatricula(res.getInt(1));
         aluno.setNome(res.getString(2));
-        aluno.setDataNascimento(res.getDate(3).toLocalDate());
-        aluno.setDataMatricula(res.getDate(4).toLocalDate());
+        aluno.setDataNascimento(res.getDate(3) == null ? null : res.getDate(3).toLocalDate());
+        aluno.setDataMatricula(res.getDate(4) == null ? null :res.getDate(4).toLocalDate());
         aluno.setFoto(res.getBlob(5));
         aluno.setIdTurma(res.getInt(6));
         aluno.setPcd(res.getBoolean(7));
@@ -56,8 +56,8 @@ public class AlunoDAO {
             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, aluno.getNome());
-            stmt.setDate(2, Date.valueOf(aluno.getDataNascimento()));
-            stmt.setDate(3, Date.valueOf(aluno.getDataMatricula()));
+            stmt.setDate(2, aluno.getDataNascimento() == null ? null : Date.valueOf(aluno.getDataNascimento()));
+            stmt.setDate(3, aluno.getDataMatricula() == null ? null : Date.valueOf(aluno.getDataMatricula()));
             stmt.setBlob(4, aluno.getFoto());
             stmt.setInt(5, aluno.getIdTurma());
             stmt.setBoolean(6, aluno.isPcd());
