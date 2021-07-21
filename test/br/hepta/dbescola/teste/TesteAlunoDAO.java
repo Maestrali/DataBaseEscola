@@ -1,9 +1,6 @@
 package br.hepta.dbescola.teste;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -31,50 +28,8 @@ public class TesteAlunoDAO {
         alunoTeste.setTelefone(555555);
         alunoTeste.setIdTurma(1);
         alunoTeste.setPcd(false);
-
-//---------------------------------------------------------------------------------
-//      Maneira complicada de definir a data de MATRICULA que funciona COMEÇA aqui
-//---------------------------------------------------------------------------------
-
-        String dataM1 = "2010-10-21";
-        Date dataM2 = null;
-        try {
-            dataM2 = new SimpleDateFormat("yyyy-MM-dd").parse(dataM1);
-        } catch (ParseException e) {
-            System.out.println("erro na data da Matricula");
-            e.printStackTrace();
-        }
-        java.sql.Date dataM3 = new java.sql.Date(dataM2.getTime());
-
-        LocalDate dataM = dataM3.toLocalDate();
-
-        alunoTeste.setDataMatricula(dataM);
-
-//---------------------------------------------------------------------------------
-//      Maneira complicada de definir a data de MATRICULA que funciona ACABA aqui
-//---------------------------------------------------------------------------------  
-//
-//---------------------------------------------------------------------------------        
-//      Maneira complicada de definir a data de NASCIMENTO que funciona COMEÇA aqui
-//---------------------------------------------------------------------------------     
-
-        String dataN1 = "1999-05-16";
-        Date dataN2 = null;
-        try {
-            dataN2 = new SimpleDateFormat("yyyy-MM-dd").parse(dataN1);
-        } catch (ParseException e) {
-            System.out.println("erro na data");
-            e.printStackTrace();
-        }
-        java.sql.Date dataN3 = new java.sql.Date(dataN2.getTime());
-
-        LocalDate dataN = dataN3.toLocalDate();
-
-        alunoTeste.setDataNascimento(dataN);
-
-//--------------------------------------------------------------------------------       
-//      Maneira complicada de definir a data de NASCIMENTO que funciona ACABA aqui
-//--------------------------------------------------------------------------------
+        alunoTeste.setDataMatricula(LocalDate.now());
+        alunoTeste.setDataNascimento(LocalDate.parse("1999-05-16"));
 
         AlunoDAO dao = new AlunoDAO();
         pk = dao.cadastrarAluno(alunoTeste); // matricula do aluno cadastrado
@@ -125,9 +80,20 @@ public class TesteAlunoDAO {
         assert (check);
 
     }
-
+    
     @Test
     @Order(5)
+    public void testSelecionarAlunoMatricula2() {
+        
+        AlunoDAO dao = new AlunoDAO();
+
+        Aluno alunoBuscado = dao.selecionarAlunoMatricula(pk);
+
+        assert (alunoBuscado != null);
+    }
+
+    @Test
+    @Order(6)
     public void testDelAluno() {
 
         Boolean check = false;

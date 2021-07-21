@@ -30,17 +30,6 @@ public class Aluno {
     public Aluno(String nome) {
 
         this.nome = nome;
-
-    }
-
-    public Aluno(String nome, LocalDate dataNascimento, Boolean pcd, int telefone, String email) {
-
-        this.nome = nome;
-        this.dataNascimento = dataNascimento;
-        this.pcd = pcd;
-        this.telefone = telefone;
-        this.email = email;
-
     }
 
     public Integer getMatricula() {

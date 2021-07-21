@@ -26,8 +26,8 @@ public class AlunoDAO {
 
         aluno.setMatricula(res.getInt(1));
         aluno.setNome(res.getString(2));
-        aluno.setDataNascimento(res.getDate(3).toLocalDate());
-        aluno.setDataMatricula(res.getDate(4).toLocalDate());
+        aluno.setDataNascimento(res.getDate(3) == null ? null : res.getDate(3).toLocalDate());
+        aluno.setDataMatricula(res.getDate(4) == null ? null :res.getDate(4).toLocalDate());
         aluno.setFoto(res.getBlob(5));
         aluno.setIdTurma(res.getInt(6));
         aluno.setPcd(res.getBoolean(7));
@@ -56,8 +56,8 @@ public class AlunoDAO {
             PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             stmt.setString(1, aluno.getNome());
-            stmt.setDate(2, Date.valueOf(aluno.getDataNascimento()));
-            stmt.setDate(3, Date.valueOf(aluno.getDataMatricula()));
+            stmt.setDate(2, aluno.getDataNascimento() == null ? null : Date.valueOf(aluno.getDataNascimento()));
+            stmt.setDate(3, aluno.getDataMatricula() == null ? null : Date.valueOf(aluno.getDataMatricula()));
             stmt.setBlob(4, aluno.getFoto());
             stmt.setInt(5, aluno.getIdTurma());
             stmt.setBoolean(6, aluno.isPcd());
@@ -101,7 +101,7 @@ public class AlunoDAO {
 
             while (res.next()) {
                 alunoBuscado = this.parse(res);
-                System.out.println("Aluno Buscado: " + alunoBuscado.getNome() + "  " + alunoBuscado.getMatricula());
+                System.out.println("Aluno Buscado: " + alunoBuscado.getNome() + " - Mat " + alunoBuscado.getMatricula());
             }
 
         } catch (SQLException e) {
@@ -115,20 +115,20 @@ public class AlunoDAO {
 
     public List<Aluno> buscarAlunosNome(String nome) {
 
-        List<Aluno> alunos = new ArrayList<Aluno>();
+        List<Aluno> alunos = new ArrayList<>();
 
-        String sql = "SELECT * FROM aluno a WHERE nome LIKE ?";
-
+        String sql = " SELECT a.* FROM aluno a WHERE nome LIKE ? ";
+                
         try {
             PreparedStatement pst = conexao.prepareStatement(sql);
 
-            pst.setString(1, nome + "%");
+            pst.setString(1,"%" + nome + "%");
 
             ResultSet res = pst.executeQuery();
 
             System.out.print("Alunos Encontrados:  ");
             while (res.next()) {
-                Aluno alunoBuscado = this.parse(res);
+                Aluno alunoBuscado = parse(res);                
                 System.out.print(alunoBuscado.getNome() + "  ");
                 alunos.add(alunoBuscado);
             }
@@ -191,7 +191,7 @@ public class AlunoDAO {
             String sqlUp = "UPDATE aluno SET " // Numeros indicados para facilitar entendimento no PreparedStatement
                     /* 1 */ + "nome = ?, "
                     /* 2 */ + "dataNascimento = ?, "
-                    /* 3 */ + "dataMatricula = ?,"
+                    /* 3 */ + "dataMatricula = ?, "
                     /* 4 */ + "foto = ?, "
                     /* 5 */ + "fk_IdTurma = ?, "
                     /* 6 */ + "pcd = ?, "
@@ -203,8 +203,8 @@ public class AlunoDAO {
 
             stmt.setString(1, aluno.getNome() != null ? aluno.getNome() : alunoBuscado.getNome());
 
-            stmt.setDate(2, alunoBuscado.getDataNascimento() != null ? Date.valueOf(alunoBuscado.getDataNascimento()) //
-                    : Date.valueOf(aluno.getDataNascimento()));
+            stmt.setDate(2, aluno.getDataNascimento() != null ? Date.valueOf(aluno.getDataNascimento()) //
+                    : Date.valueOf(alunoBuscado.getDataNascimento()));
 
             stmt.setDate(3, aluno.getDataMatricula() != null ? Date.valueOf(aluno.getDataMatricula()) //
                     : Date.valueOf(alunoBuscado.getDataMatricula()));
