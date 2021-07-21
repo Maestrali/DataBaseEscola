@@ -101,7 +101,7 @@ public class AlunoDAO {
 
             while (res.next()) {
                 alunoBuscado = this.parse(res);
-                System.out.println("Aluno Buscado: " + alunoBuscado.getNome() + "  " + alunoBuscado.getMatricula());
+                System.out.println("Aluno Buscado: " + alunoBuscado.getNome() + " - Mat " + alunoBuscado.getMatricula());
             }
 
         } catch (SQLException e) {
@@ -115,7 +115,7 @@ public class AlunoDAO {
 
     public List<Aluno> buscarAlunosNome(String nome) {
 
-        List<Aluno> alunos = new ArrayList<Aluno>();
+        List<Aluno> alunos = new ArrayList<>();
 
         String sql = " SELECT a.* FROM aluno a WHERE nome LIKE ? ";
                 
@@ -203,8 +203,8 @@ public class AlunoDAO {
 
             stmt.setString(1, aluno.getNome() != null ? aluno.getNome() : alunoBuscado.getNome());
 
-            stmt.setDate(2, aluno.getDataNascimento() != null ? Date.valueOf(alunoBuscado.getDataNascimento()) //
-                    : Date.valueOf(aluno.getDataNascimento()));
+            stmt.setDate(2, aluno.getDataNascimento() != null ? Date.valueOf(aluno.getDataNascimento()) //
+                    : Date.valueOf(alunoBuscado.getDataNascimento()));
 
             stmt.setDate(3, aluno.getDataMatricula() != null ? Date.valueOf(aluno.getDataMatricula()) //
                     : Date.valueOf(alunoBuscado.getDataMatricula()));
