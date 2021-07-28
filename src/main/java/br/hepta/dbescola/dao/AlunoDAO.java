@@ -191,7 +191,7 @@ public class AlunoDAO {
             String sqlUp = "UPDATE aluno SET " // Numeros indicados para facilitar entendimento no PreparedStatement
                     /* 1 */ + "nome = ?, "
                     /* 2 */ + "dataNascimento = ?, "
-                    /* 3 */ + "dataMatricula = ?, "
+                    /* 3 */ + "dataMatricula = ?,"
                     /* 4 */ + "foto = ?, "
                     /* 5 */ + "fk_IdTurma = ?, "
                     /* 6 */ + "pcd = ?, "
@@ -205,6 +205,8 @@ public class AlunoDAO {
 
             stmt.setDate(2, aluno.getDataNascimento() != null ? Date.valueOf(aluno.getDataNascimento()) //
                     : Date.valueOf(alunoBuscado.getDataNascimento()));
+            stmt.setDate(2, alunoBuscado.getDataNascimento() != null ? Date.valueOf(alunoBuscado.getDataNascimento()) //
+                    : Date.valueOf(aluno.getDataNascimento()));
 
             stmt.setDate(3, aluno.getDataMatricula() != null ? Date.valueOf(aluno.getDataMatricula()) //
                     : Date.valueOf(alunoBuscado.getDataMatricula()));
