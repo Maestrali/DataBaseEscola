@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -20,6 +18,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import org.glassfish.jersey.media.multipart.FormDataBodyPart;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 import br.hepta.dbescola.dao.AlunoDAO;
 import br.hepta.dbescola.dto.AlunoDTO;
@@ -51,33 +52,20 @@ public class AlunoResource {
         }
     }
 
-//    @POST
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    public Response adicionarAluno(AlunoDTO aluno, File file) throws SQLException, URISyntaxException, IOException {
-//
-//        aluno.setNome(aluno.getNome() != null ? aluno.getNome() : "");
-//
-//        Date date = new Date(System.currentTimeMillis());
-//        java.sql.Date data = new java.sql.Date(date.getTime());
-//        LocalDate dataM = data.toLocalDate();
-//        aluno.setDataMatricula(dataM);
-//
-//        aluno.setDataNascimento(aluno.getDataNascimento() != null ? aluno.getDataNascimento() : dataM);
-//
-//        aluno.setIdTurma(aluno.getIdTurma() != null ? aluno.getIdTurma() : 10);
-//
-//        aluno.setPcd(aluno.getPcd() != null ? aluno.getPcd() : false);
-//
-//        aluno.setEmail(aluno.getEmail() != null ? aluno.getEmail() : "");
-//
-//        aluno.setTelefone(aluno.getTelefone() != null ? aluno.getTelefone() : 0);
-//
-//        int matricula = service.cadastrarAluno(aluno, file);
-//        URI uri = new URI("/DataBaseEscola/rest/aluno/" + matricula);
-//
-//        return Response.created(uri).build();
-//
-//    }
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    public Response adicionarAluno(@FormDataParam("aluno") FormDataBodyPart aluno, File file) throws SQLException, URISyntaxException, IOException {
+        
+        AlunoDTO alunoDto = new AlunoDTO();
+        aluno.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+        alunoDto = aluno.getValueAs(AlunoDTO.class);
+
+        int matricula = service.cadastrarAluno(alunoDto, file);
+        URI uri = new URI("/DataBaseEscola/rest/aluno/" + matricula);
+
+        return Response.created(uri).build();
+
+    }
 
     @OPTIONS
     @Path("{id}")
@@ -94,17 +82,16 @@ public class AlunoResource {
         return res;
     }
 
-//    @PUT
-//    @Consumes(MediaType.APPLICATION_JSON)
-//    @Path("{id}")
-//    public Response atualizarAluno(@PathParam("id") int id, AlunoDTO aluno, File file) throws SQLException, IOException {
-//
-//        if (aluno.getMatricula() != id) {
-//            aluno.setMatricula(id);
-//        }
-//        Response response = service.atualizarAluno(aluno, file) ? Response.ok().build() : Response.notModified().build();
-//        return response;
-//    }
+    @PUT
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Path("{id}")
+    public Response atualizarAluno(@PathParam("id") int id, @FormDataParam("aluno") FormDataBodyPart aluno, File file) throws SQLException, IOException {
+        AlunoDTO alunoDto = new AlunoDTO();
+        aluno.setMediaType(MediaType.APPLICATION_JSON_TYPE);
+        alunoDto = aluno.getValueAs(AlunoDTO.class);
+        Response response = service.atualizarAluno(alunoDto, file) ? Response.ok().build() : Response.notModified().build();
+        return response;
+    }
 
     @HEAD
     @Consumes(MediaType.APPLICATION_JSON)
