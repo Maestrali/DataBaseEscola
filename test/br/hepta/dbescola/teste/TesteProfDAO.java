@@ -1,15 +1,13 @@
 package br.hepta.dbescola.teste;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import br.hepta.dbescola.dao.ProfessorDAO;
 import br.hepta.dbescola.entity.Professor;
@@ -18,7 +16,7 @@ import br.hepta.dbescola.entity.Professor;
 
 public class TesteProfDAO {
 
-    private static Integer pk;
+    private static Integer pk = 0;
 
     @Test
     @Order(1)
@@ -31,51 +29,13 @@ public class TesteProfDAO {
         profTeste.setTelefone(555555);
         profTeste.setMateria("Fisica");
         profTeste.setEstagiario(false);
-
-//---------------------------------------------------------------------------------
-//      Maneira complicada de definir a data de MATRICULA que funciona COMEÇA aqui
-//---------------------------------------------------------------------------------
-
-        String dataM1 = "2010-10-21";
-        Date dataM2 = null;
-        try {
-            dataM2 = new SimpleDateFormat("yyyy-MM-dd").parse(dataM1);
-        } catch (ParseException e) {
-            System.out.println("erro na data da Matricula");
-            e.printStackTrace();
-        }
-        java.sql.Date dataM3 = new java.sql.Date(dataM2.getTime());
-
-        LocalDate dataM = dataM3.toLocalDate();
-
+        
+        LocalDate dataM = LocalDate.parse("1965-10-13");
         profTeste.setDataId(dataM);
-
-//---------------------------------------------------------------------------------
-//      Maneira complicada de definir a data de MATRICULA que funciona ACABA aqui
-//---------------------------------------------------------------------------------  
-//
-//---------------------------------------------------------------------------------        
-//      Maneira complicada de definir a data de NASCIMENTO que funciona COMEÇA aqui
-//---------------------------------------------------------------------------------     
-
-        String dataN1 = "1999-05-16";
-        Date dataN2 = null;
-        try {
-            dataN2 = new SimpleDateFormat("yyyy-MM-dd").parse(dataN1);
-        } catch (ParseException e) {
-            System.out.println("erro na data");
-            e.printStackTrace();
-        }
-        java.sql.Date dataN3 = new java.sql.Date(dataN2.getTime());
-
-        LocalDate dataN = dataN3.toLocalDate();
-
+        
+        LocalDate dataN = LocalDate.parse("1965-10-13");
         profTeste.setDataNascimento(dataN);
-
-//--------------------------------------------------------------------------------       
-//      Maneira complicada de definir a data de NASCIMENTO que funciona ACABA aqui
-//--------------------------------------------------------------------------------
-
+        
         ProfessorDAO dao = new ProfessorDAO();
         pk = dao.cadastrarProf(profTeste);
 
@@ -85,7 +45,7 @@ public class TesteProfDAO {
 
     @Test
     @Order(2)
-    public void testBuscarProfessorID() {
+    public void testBuscarProfessorPeloID() throws SQLException {
 
         Professor check = null;
 
@@ -95,7 +55,7 @@ public class TesteProfDAO {
 
         ProfessorDAO dao = new ProfessorDAO();
 
-        check = dao.selecionarProfId(pk);
+        check = dao.selecionarProfPeloId(pk);
 
         assert (check != null);
         
@@ -103,13 +63,14 @@ public class TesteProfDAO {
     
     @Test
     @Order(3)
-    public void testBuscarProfessorNome() {
+    public void testBuscarProfessores() {
 
         List<Professor> check = null;
 
         ProfessorDAO dao = new ProfessorDAO();
 
-        check = dao.buscarProfsNome("Professor Tes");
+        check = dao.buscarTodosProfs();
+        System.out.println(check);
 
         assert (check.size()>0);
         

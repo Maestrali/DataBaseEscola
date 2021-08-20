@@ -1,5 +1,6 @@
 package br.hepta.dbescola.teste;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,11 +16,11 @@ import br.hepta.dbescola.entity.Aluno;
 
 public class TesteAlunoDAO {
 
-    private static Integer pk;
+    private static Integer pk = 0;
 
     @Test
     @Order(1)
-    public void testAddAluno() {
+    public void testAddAluno() throws SQLException {
 
         Aluno alunoTeste = new Aluno();
 
@@ -66,7 +67,7 @@ public class TesteAlunoDAO {
     
     @Test
     @Order(4)
-    public void testUpAluno() {
+    public void testUpAluno() throws SQLException {
 
         Boolean check = false;
 

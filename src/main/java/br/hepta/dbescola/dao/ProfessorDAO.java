@@ -66,48 +66,18 @@ public class ProfessorDAO {
         return id;
 
     }
-
-    public Boolean removerProf(int id) {
-
-        Boolean check = false;
-
-        String sql = "DELETE FROM professor WHERE id = ?";
-
-        try {
-            PreparedStatement stmt = conexao.prepareStatement(sql);
-
-            stmt.setInt(1, id);
-            if (stmt.executeUpdate() > 0) {
-                check = true;
-                System.out.println("Professor Excluido com sucesso!");
-            } else {
-                System.out.println("Professor NÃO Excluido!");
-            }
-
-            stmt.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        return check;
-
-    }
-
-    public List<Professor> buscarProfsNome(String nome) {
+    
+    public List<Professor> buscarTodosProfs() {
 
         List<Professor> profs = new ArrayList<Professor>();
 
-        String sql = "SELECT * FROM professor WHERE nome LIKE ?";
+        String sql = "SELECT * FROM professor";
 
         try {
             PreparedStatement ps = conexao.prepareStatement(sql);
-            
-            ps.setString(1, nome + "%");
 
             ResultSet res = ps.executeQuery();
-
-            System.out.print("Professores Encontrados:  ");
+            
             while (res.next()) {
 
                 Professor profBuscado = new Professor();
@@ -122,10 +92,8 @@ public class ProfessorDAO {
                 profBuscado.setTelefone(res.getInt(8));
                 profBuscado.setEmail(res.getString(9));
 
-                System.out.print(profBuscado.getNome() + "  ");
                 profs.add(profBuscado);
             }
-            System.out.println("");
             
             ps.close();
 
@@ -137,14 +105,16 @@ public class ProfessorDAO {
         return profs;
     }
 
-    public Professor selecionarProfId(int id) {
+    public Professor selecionarProfPeloId(int id) throws SQLException {
 
         Professor profBuscado = new Professor();
 
         String sql = "SELECT * FROM professor WHERE id = ?";
+        
+        PreparedStatement ps = null;
 
         try {
-            PreparedStatement ps = conexao.prepareStatement(sql);
+            ps = conexao.prepareStatement(sql);
 
             ps.setInt(1, id);          
 
@@ -168,11 +138,13 @@ public class ProfessorDAO {
             }
             System.out.println("");
             
-            ps.close();
+            
 
         } catch (SQLException e) {
             System.out.println("Erro ao encontrar professor");
             e.printStackTrace();
+        } finally {
+            ps.close();
         }
 
         return profBuscado;
@@ -251,6 +223,33 @@ public class ProfessorDAO {
         } catch (
 
         SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return check;
+
+    }
+
+    public Boolean removerProf(int id) {
+
+        Boolean check = false;
+
+        String sql = "DELETE FROM professor WHERE id = ?";
+
+        try {
+            PreparedStatement stmt = conexao.prepareStatement(sql);
+
+            stmt.setInt(1, id);
+            if (stmt.executeUpdate() > 0) {
+                check = true;
+                System.out.println("Professor Excluido com sucesso!");
+            } else {
+                System.out.println("Professor NÃO Excluido!");
+            }
+
+            stmt.close();
+
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 

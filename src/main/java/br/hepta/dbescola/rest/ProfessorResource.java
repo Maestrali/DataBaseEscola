@@ -2,6 +2,7 @@ package br.hepta.dbescola.rest;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -21,22 +22,22 @@ import br.hepta.dbescola.entity.Professor;
 @Path("/prof")
 public class ProfessorResource {
 
-    private static ProfessorDAO dao = new ProfessorDAO();
+    private ProfessorDAO dao = new ProfessorDAO();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Professor> listarTodosProfs() {
         
-        return dao.buscarProfsNome("");
+        return dao.buscarTodosProfs();
 
     }
 
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response encontrarProf(@PathParam("id") int id) {
+    public Response encontrarProf(@PathParam("id") int id) throws SQLException {
 
-        Professor profBuscado = dao.selecionarProfId(id);
+        Professor profBuscado = dao.selecionarProfPeloId(id);
         if (profBuscado.getId() != null) {
             return Response.ok(profBuscado, MediaType.APPLICATION_JSON).build();
         } else {

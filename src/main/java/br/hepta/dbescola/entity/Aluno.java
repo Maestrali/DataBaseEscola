@@ -1,6 +1,7 @@
 package br.hepta.dbescola.entity;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -17,7 +18,10 @@ public class Aluno {
     @JsonSerialize(using = LocalDateSerializer.class)
     @JsonDeserialize(using = LocalDateDeserializer.class)
     private LocalDate dataMatricula;
-    private java.sql.Blob foto; // lembrar de mudar o tipo futuramente
+    private byte[] foto; // lembrar de mudar o tipo futuramente
+    private String nomeFoto;
+    private String tamanhoFoto;
+    private String tipoFoto;
     private Integer idTurma;
     private Boolean pcd;
     private Integer telefone;
@@ -25,11 +29,6 @@ public class Aluno {
 
     public Aluno() {
 
-    }
-
-    public Aluno(String nome) {
-
-        this.nome = nome;
     }
 
     public Integer getMatricula() {
@@ -41,19 +40,75 @@ public class Aluno {
     }
 
     public String getNome() {
-        return this.nome;
+        return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    public java.sql.Blob getFoto() {
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
+    }
+
+    public LocalDate getDataMatricula() {
+        return dataMatricula;
+    }
+
+    public void setDataMatricula(LocalDate dataMatricula) {
+        this.dataMatricula = dataMatricula;
+    }
+
+    public byte[] getFoto() {
         return foto;
     }
 
-    public void setFoto(java.sql.Blob blob) {
-        this.foto = blob;
+    public void setFoto(byte[] foto) {
+        this.foto = foto;
+    }
+
+    public String getNomeFoto() {
+        return nomeFoto;
+    }
+
+    public void setNomeFoto(String nomeFoto) {
+        this.nomeFoto = nomeFoto;
+    }
+
+    public String getTamanhoFoto() {
+        return tamanhoFoto;
+    }
+
+    public void setTamanhoFoto(String tamanhoFoto) {
+        this.tamanhoFoto = tamanhoFoto;
+    }
+
+    public String getTipoFoto() {
+        return tipoFoto;
+    }
+
+    public void setTipoFoto(String tipoFoto) {
+        this.tipoFoto = tipoFoto;
+    }
+
+    public Integer getIdTurma() {
+        return idTurma;
+    }
+
+    public void setIdTurma(Integer idTurma) {
+        this.idTurma = idTurma;
+    }
+
+    public Boolean getPcd() {
+        return pcd;
+    }
+
+    public void setPcd(Boolean pcd) {
+        this.pcd = pcd;
     }
 
     public Integer getTelefone() {
@@ -64,44 +119,106 @@ public class Aluno {
         this.telefone = telefone;
     }
 
-    public LocalDate getDataNascimento() {
-        return this.dataNascimento;
-    }
-
-    public void setDataNascimento(LocalDate dataNascimento) {
-        this.dataNascimento = dataNascimento;
-    }
-
-    public LocalDate getDataMatricula() {
-        return this.dataMatricula;
-    }
-
-    public void setDataMatricula(LocalDate dataMatricula) {
-        this.dataMatricula = dataMatricula;
-    }
-
-    public Boolean isPcd() {
-        return this.pcd;
-    }
-
-    public void setPcd(Boolean pcd) {
-        this.pcd = pcd;
-    }
-
-    public Integer getIdTurma() {
-        return this.idTurma;
-    }
-
-    public void setIdTurma(Integer idTurma) {
-        this.idTurma = idTurma;
-    }
-
     public String getEmail() {
-        return this.email;
+        return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "Aluno [matricula=" + matricula + ", nome=" + nome + ", dataNascimento=" + dataNascimento + ", dataMatricula=" + dataMatricula + ", idTurma="
+                + idTurma + ", pcd=" + pcd + ", telefone=" + telefone + ", email=" + email + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((dataMatricula == null) ? 0 : dataMatricula.hashCode());
+        result = prime * result + ((dataNascimento == null) ? 0 : dataNascimento.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + Arrays.hashCode(foto);
+        result = prime * result + ((idTurma == null) ? 0 : idTurma.hashCode());
+        result = prime * result + ((matricula == null) ? 0 : matricula.hashCode());
+        result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+        result = prime * result + ((nomeFoto == null) ? 0 : nomeFoto.hashCode());
+        result = prime * result + ((pcd == null) ? 0 : pcd.hashCode());
+        result = prime * result + ((tamanhoFoto == null) ? 0 : tamanhoFoto.hashCode());
+        result = prime * result + ((telefone == null) ? 0 : telefone.hashCode());
+        result = prime * result + ((tipoFoto == null) ? 0 : tipoFoto.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Aluno other = (Aluno) obj;
+        if (dataMatricula == null) {
+            if (other.dataMatricula != null)
+                return false;
+        } else if (!dataMatricula.equals(other.dataMatricula))
+            return false;
+        if (dataNascimento == null) {
+            if (other.dataNascimento != null)
+                return false;
+        } else if (!dataNascimento.equals(other.dataNascimento))
+            return false;
+        if (email == null) {
+            if (other.email != null)
+                return false;
+        } else if (!email.equals(other.email))
+            return false;
+        if (!Arrays.equals(foto, other.foto))
+            return false;
+        if (idTurma == null) {
+            if (other.idTurma != null)
+                return false;
+        } else if (!idTurma.equals(other.idTurma))
+            return false;
+        if (matricula == null) {
+            if (other.matricula != null)
+                return false;
+        } else if (!matricula.equals(other.matricula))
+            return false;
+        if (nome == null) {
+            if (other.nome != null)
+                return false;
+        } else if (!nome.equals(other.nome))
+            return false;
+        if (nomeFoto == null) {
+            if (other.nomeFoto != null)
+                return false;
+        } else if (!nomeFoto.equals(other.nomeFoto))
+            return false;
+        if (pcd == null) {
+            if (other.pcd != null)
+                return false;
+        } else if (!pcd.equals(other.pcd))
+            return false;
+        if (tamanhoFoto == null) {
+            if (other.tamanhoFoto != null)
+                return false;
+        } else if (!tamanhoFoto.equals(other.tamanhoFoto))
+            return false;
+        if (telefone == null) {
+            if (other.telefone != null)
+                return false;
+        } else if (!telefone.equals(other.telefone))
+            return false;
+        if (tipoFoto == null) {
+            if (other.tipoFoto != null)
+                return false;
+        } else if (!tipoFoto.equals(other.tipoFoto))
+            return false;
+        return true;
     }
 
 }
