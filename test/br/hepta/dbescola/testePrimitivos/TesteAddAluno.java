@@ -1,5 +1,6 @@
 package br.hepta.dbescola.testePrimitivos;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -13,7 +14,7 @@ import br.hepta.dbescola.entity.Aluno;
 public class TesteAddAluno {
     
     @Test
-    public void testAddAluno() {
+    public void testAddAluno() throws SQLException {
 
         Aluno aluno = new Aluno();
         

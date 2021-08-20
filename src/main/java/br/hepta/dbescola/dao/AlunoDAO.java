@@ -1,5 +1,7 @@
 package br.hepta.dbescola.dao;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -27,17 +29,20 @@ public class AlunoDAO {
         aluno.setMatricula(res.getInt(1));
         aluno.setNome(res.getString(2));
         aluno.setDataNascimento(res.getDate(3) == null ? null : res.getDate(3).toLocalDate());
-        aluno.setDataMatricula(res.getDate(4) == null ? null :res.getDate(4).toLocalDate());
-        aluno.setFoto(res.getBlob(5));
+        aluno.setDataMatricula(res.getDate(4) == null ? null : res.getDate(4).toLocalDate());
+        aluno.setFoto(res.getBytes(5));
         aluno.setIdTurma(res.getInt(6));
         aluno.setPcd(res.getBoolean(7));
         aluno.setTelefone(res.getInt(8));
         aluno.setEmail(res.getString(9));
+        aluno.setNomeFoto(res.getString(10));
+        aluno.setTipoFoto(res.getString(11));
+        aluno.setTamanhoFoto(res.getString(12));
 
         return aluno;
     }
 
-    public Integer cadastrarAluno(Aluno aluno) {
+    public Integer cadastrarAluno(Aluno aluno) throws SQLException {
 
         Integer mat = 0;
 
@@ -49,20 +54,30 @@ public class AlunoDAO {
                 /* 5 */ + "fk_idTurma, "
                 /* 6 */ + "pcd, "
                 /* 7 */ + "telefone, "
-                /* 8 */ + "email) " //
-                + "VALUE (?,?,?,?,?,?,?,?)";
+                /* 8 */ + "email) "
+                /* 9 */ + "foto_nome) "
+                /* 10 */ + "foto_tipo) "
+                /* 11 */ + "foto_tamanho) " //
+                + "VALUE (?,?,?,?,?,?,?,?,?,?,?)";
+
+        PreparedStatement stmt = null;
 
         try {
-            PreparedStatement stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt = conexao.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            InputStream targetStream = new ByteArrayInputStream(aluno.getFoto());
 
             stmt.setString(1, aluno.getNome());
             stmt.setDate(2, aluno.getDataNascimento() == null ? null : Date.valueOf(aluno.getDataNascimento()));
             stmt.setDate(3, aluno.getDataMatricula() == null ? null : Date.valueOf(aluno.getDataMatricula()));
-            stmt.setBlob(4, aluno.getFoto());
+            stmt.setBlob(4, targetStream);
             stmt.setInt(5, aluno.getIdTurma());
-            stmt.setBoolean(6, aluno.isPcd());
+            stmt.setBoolean(6, aluno.getPcd());
             stmt.setInt(7, aluno.getTelefone());
             stmt.setString(8, aluno.getEmail());
+            stmt.setString(9, aluno.getNomeFoto());
+            stmt.setString(10, aluno.getTipoFoto());
+            stmt.setString(11, aluno.getTamanhoFoto());
 
             stmt.executeUpdate();
             try (ResultSet rst = stmt.getGeneratedKeys()) {
@@ -74,25 +89,24 @@ public class AlunoDAO {
                 }
 
             }
-
-            stmt.close();
+            return mat;
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            stmt.close();
         }
 
-        return mat;
     }
 
     public Aluno selecionarAlunoMatricula(int matricula) {
 
-        
         Aluno alunoBuscado = new Aluno();
 
-        String sql = "SELECT * FROM aluno a WHERE matricula = ?";    
+        String sql = "SELECT * FROM aluno a WHERE matricula = ?";
 
         PreparedStatement pst;
-        
+
         try {
             pst = conexao.prepareStatement(sql);
 
@@ -101,11 +115,10 @@ public class AlunoDAO {
 
             while (res.next()) {
                 alunoBuscado = this.parse(res);
-                System.out.println("Aluno Buscado: " + alunoBuscado.getNome() + " - Mat " + alunoBuscado.getMatricula());
             }
 
         } catch (SQLException e) {
-           
+
             e.printStackTrace();
         }
 
@@ -118,17 +131,17 @@ public class AlunoDAO {
         List<Aluno> alunos = new ArrayList<>();
 
         String sql = " SELECT a.* FROM aluno a WHERE nome LIKE ? ";
-                
+
         try {
             PreparedStatement pst = conexao.prepareStatement(sql);
 
-            pst.setString(1,"%" + nome + "%");
+            pst.setString(1, "%" + nome + "%");
 
             ResultSet res = pst.executeQuery();
 
             System.out.print("Alunos Encontrados:  ");
             while (res.next()) {
-                Aluno alunoBuscado = parse(res);                
+                Aluno alunoBuscado = parse(res);
                 System.out.print(alunoBuscado.getNome() + "  ");
                 alunos.add(alunoBuscado);
             }
@@ -167,13 +180,15 @@ public class AlunoDAO {
         return check;
     }
 
-    public Boolean atualizarAluno(Aluno aluno) {
+    public Boolean atualizarAluno(Aluno aluno) throws SQLException {
 
         boolean check = false;
 
         String sqlSelect = "SELECT * FROM aluno WHERE matricula = ?";
 
         Aluno alunoBuscado = new Aluno();
+
+        PreparedStatement stmt = null;
 
         try {
             PreparedStatement pst = conexao.prepareStatement(sqlSelect);
@@ -197,9 +212,12 @@ public class AlunoDAO {
                     /* 6 */ + "pcd = ?, "
                     /* 7 */ + "telefone = ?, "
                     /* 8 */ + "email = ? "
-                    /* 9 */ + "WHERE matricula = ?";
+                    /* 9 */ + "nome_foto = ?, "
+                    /* 10 */ + "tipo_foto = ?, "
+                    /* 11 */ + "tamanho_foto = ?, "
+                    /* 12 */ + "WHERE matricula = ?";
 
-            PreparedStatement stmt = conexao.prepareStatement(sqlUp);
+            stmt = conexao.prepareStatement(sqlUp);
 
             stmt.setString(1, aluno.getNome() != null ? aluno.getNome() : alunoBuscado.getNome());
 
@@ -211,17 +229,23 @@ public class AlunoDAO {
             stmt.setDate(3, aluno.getDataMatricula() != null ? Date.valueOf(aluno.getDataMatricula()) //
                     : Date.valueOf(alunoBuscado.getDataMatricula()));
 
-            stmt.setBlob(4, aluno.getFoto() != null ? aluno.getFoto() : alunoBuscado.getFoto());
+            stmt.setBytes(4, aluno.getFoto() != null ? aluno.getFoto() : alunoBuscado.getFoto());
 
             stmt.setInt(5, aluno.getIdTurma() != null ? aluno.getIdTurma() : alunoBuscado.getIdTurma());
 
-            stmt.setBoolean(6, aluno.isPcd() != null ? aluno.isPcd() : alunoBuscado.isPcd());
+            stmt.setBoolean(6, aluno.getPcd() != null ? aluno.getPcd() : alunoBuscado.getPcd());
 
             stmt.setInt(7, aluno.getTelefone() != null ? aluno.getTelefone() : alunoBuscado.getTelefone());
 
             stmt.setString(8, aluno.getEmail() != null ? aluno.getEmail() : alunoBuscado.getEmail());
 
-            stmt.setInt(9, aluno.getMatricula());
+            stmt.setString(9, aluno.getNomeFoto() != null ? aluno.getEmail() : alunoBuscado.getEmail());
+
+            stmt.setString(10, aluno.getTipoFoto() != null ? aluno.getEmail() : alunoBuscado.getEmail());
+
+            stmt.setString(11, aluno.getTamanhoFoto() != null ? aluno.getEmail() : alunoBuscado.getEmail());
+
+            stmt.setInt(12, aluno.getMatricula());
 
             int adicionado = stmt.executeUpdate();
             if (adicionado > 0) {
@@ -230,10 +254,12 @@ public class AlunoDAO {
             }
 
             pst.close();
-            stmt.close();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+
+            stmt.close();
         }
 
         return check;

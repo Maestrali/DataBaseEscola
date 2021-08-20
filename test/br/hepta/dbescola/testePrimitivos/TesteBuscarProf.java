@@ -10,7 +10,7 @@ public class TesteBuscarProf {
     public static void main(String[] args) {
         
         ProfessorDAO dao = new ProfessorDAO();
-        List<Professor> lista = dao.buscarProfsNome("Po");
+        List<Professor> lista = dao.buscarTodosProfs();
         System.out.println(lista);
         
     }
